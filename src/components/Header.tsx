@@ -1,112 +1,42 @@
-'use client'
-
-import React, { useState } from 'react';
+// 'use client'
 
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
 import IconButton from '@mui/material/IconButton';
-import Link from 'next/link';
-import Menu from '@mui/material/Menu';
 import MenuIcon from '@mui/icons-material/Menu';
-import MenuItem from '@mui/material/MenuItem';
+import React from 'react';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
+import useMediaQuery from '@mui/material/useMediaQuery';
+import { useTheme } from '@mui/material/styles';
 
-const Header = () => {
+interface HeaderProps {
+    onDrawerToggle: () => void;
+}
 
-    console.log('Render header....')
-    const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-    const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = useState<null | HTMLElement>(null);
+const Header: React.FC<HeaderProps> = ({ onDrawerToggle }) => {
+    const theme = useTheme();
+    const isMobile = useMediaQuery(theme.breakpoints.down('md'));
 
-    const handleMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
-        setAnchorEl(event.currentTarget);
-    };
-
-    const handleMobileMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
-        setMobileMoreAnchorEl(event.currentTarget);
-    };
-
-    const handleMenuClose = () => {
-        setAnchorEl(null);
-        setMobileMoreAnchorEl(null);
-    };
-
-    const menuItems = [
-        { label: 'All Categories', href: '/categories' },
-        {
-            label: 'News', href: '/news', subItems: [
-                { label: 'Technology', href: '/news/technology' },
-                { label: 'Business', href: '/news/business' },
-            ]
-        },
-        { label: 'Blog', href: '/blog' },
-        { label: 'About', href: '/about' },
-    ];
-
-    const renderMenu = (
-        <Menu
-            anchorEl={anchorEl}
-            open={Boolean(anchorEl)}
-            onClose={handleMenuClose}
-        >
-            {menuItems.map((item) => (
-                <MenuItem key={item.label} onClick={handleMenuClose}>
-                    <Link href={item.href}>
-                        {item.label}
-                    </Link>
-                </MenuItem>
-            ))}
-        </Menu>
-    );
-
-    const renderMobileMenu = (
-        <Menu
-            anchorEl={mobileMoreAnchorEl}
-            open={Boolean(mobileMoreAnchorEl)}
-            onClose={handleMenuClose}
-        >
-            {menuItems.map((item) => (
-                <MenuItem key={item.label} onClick={handleMenuClose}>
-                    <Link href={item.href}>
-                        {item.label}
-                    </Link>
-                </MenuItem>
-            ))}
-        </Menu>
-    );
-
+    console.log('Header render...')
     return (
-        <AppBar position="static">
+        <AppBar position="fixed" sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}>
             <Toolbar>
-                <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-                    My App
-                </Typography>
-                <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
-                    {menuItems.map((item) => (
-                        <Button
-                            key={item.label}
-                            color="inherit"
-                            onClick={item.subItems ? handleMenuOpen : undefined}
-                        >
-                            {item.label}
-                        </Button>
-                    ))}
-                </Box>
-                <Box sx={{ display: { xs: 'flex', md: 'none' } }}>
+                {isMobile && (
                     <IconButton
-                        size="large"
-                        edge="end"
                         color="inherit"
-                        aria-label="menu"
-                        onClick={handleMobileMenuOpen}
+                        aria-label="open drawer"
+                        edge="start"
+                        onClick={onDrawerToggle}
+                        sx={{ mr: 2 }}
                     >
                         <MenuIcon />
                     </IconButton>
-                </Box>
+                )}
+                <Typography variant="h6" noWrap component="div">
+                    My App
+                </Typography>
             </Toolbar>
-            {renderMenu}
-            {renderMobileMenu}
         </AppBar>
     );
 };
